@@ -1,29 +1,15 @@
 import React from "react";
 import logo from "../../imgs/logo.png";
+import SearchBar from "../SearchBar/SearchBar";
 
-const Banner = (props) => {
-  const searchHandler = (ev) => {
-    ev.preventDefault();
-    if (
-      ev.target.value &&
-      ev.target.value.trim() &&
-      ev.target.value.length > 2
-    ) {
-      props.onSearchSubmit(ev.target.value);
-    }
-  };
+const Banner = () => {
   return (
     <div className="banner text-white">
       <div className="container p-4 text-center">
         <img src={logo} alt="banner" />
         <div>
-          <span id="get-part">A place to get</span>
-          <input
-            id="search-box"
-            type="text"
-            placeholder="What is it that you truly desire?"
-            onChange={searchHandler}
-          />
+          <span id="get-part">A Place to get </span>
+          <SearchBar />
           <span> the cool stuff.</span>
         </div>
       </div>
