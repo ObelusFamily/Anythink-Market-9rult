@@ -1,17 +1,20 @@
 import React from "react";
 import logo from "../../imgs/logo.png";
+import agent from "../../agent";
 
 const Banner = (props) => {
-  const searchHandler = (ev) => {
-    ev.preventDefault();
-    if (
-      ev.target.value &&
-      ev.target.value.trim() &&
-      ev.target.value.length > 2
-    ) {
-      props.onSearchSubmit(ev.target.value);
+  const handleSearch = (title) => {
+    //props.updateSearchTerm(title);
+    if (title.length < 3) {
+      title = "";
     }
+    props.onSearch(
+      title,
+      (page) => agent.Items.byTitle(title, page),
+      agent.Items.byTitle(title)
+    );
   };
+
   return (
     <div className="banner text-white">
       <div className="container p-4 text-center">
@@ -19,10 +22,10 @@ const Banner = (props) => {
         <div>
           <span id="get-part">A place to get</span>
           <input
-            id="search-box"
             type="text"
-            placeholder="What is it that you truly desire?"
-            onChange={searchHandler}
+            id="search-box"
+            onChange={(e) => handleSearch(e.target.value)}
+            placeholder="What is it you truly desire?"
           />
           <span> the cool stuff.</span>
         </div>
