@@ -8,7 +8,6 @@ import {
   HOME_PAGE_LOADED,
   HOME_PAGE_UNLOADED,
   APPLY_TAG_FILTER,
-  SEARCH_SUBMIT,
 } from "../../constants/actionTypes";
 
 const Promise = global.Promise;
@@ -25,11 +24,16 @@ const mapDispatchToProps = (dispatch) => ({
   onLoad: (tab, pager, payload) =>
     dispatch({ type: HOME_PAGE_LOADED, tab, pager, payload }),
   onUnload: () => dispatch({ type: HOME_PAGE_UNLOADED }),
-  onSearchSubmit: (keyword) =>
-    dispatch({ type: SEARCH_SUBMIT, payload: agent.Items.byTitle(keyword) }),
 });
 
 class Home extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      term: "",
+    };
+  }
+
   componentWillMount() {
     const tab = "all";
     const itemsPromise = agent.Items.all;
@@ -41,6 +45,28 @@ class Home extends React.Component {
     );
   }
 
+  componentDidUpdate(pp, ps, ss) {
+    if (ps.term !== this.state.term) {
+      if (this.state.term.length >= 3) {
+        const tab = "all";
+        const itemsPromise = agent.Items.byTitle;
+        this.props.onLoad(
+          tab,
+          itemsPromise,
+          Promise.all([agent.Tags.getAll(), itemsPromise(this.state.term)])
+        );
+      } else {
+        const tab = "all";
+        const itemsPromise = agent.Items.all;
+        this.props.onLoad(
+          tab,
+          itemsPromise,
+          Promise.all([agent.Tags.getAll(), itemsPromise()])
+        );
+      }
+    }
+  }
+
   componentWillUnmount() {
     this.props.onUnload();
   }
@@ -48,11 +74,16 @@ class Home extends React.Component {
   render() {
     return (
       <div className="home-page">
-        <Banner onSearchSubmit={this.props.onSearchSubmit} />
+        <Banner
+          term={this.state.term}
+          setTerm={(val) => {
+            this.setState({ term: val });
+          }}
+        />
 
         <div className="container page">
           <Tags tags={this.props.tags} onClickTag={this.props.onClickTag} />
-          <MainView />
+          <MainView term={this.state.term} />
         </div>
       </div>
     );
