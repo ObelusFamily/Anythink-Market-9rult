@@ -8,7 +8,7 @@ import {
   HOME_PAGE_LOADED,
   HOME_PAGE_UNLOADED,
   APPLY_TAG_FILTER,
-  SEARCH_SUBMIT,
+  APPLY_TITLE_FILTER,
 } from "../../constants/actionTypes";
 
 const Promise = global.Promise;
@@ -25,11 +25,15 @@ const mapDispatchToProps = (dispatch) => ({
   onLoad: (tab, pager, payload) =>
     dispatch({ type: HOME_PAGE_LOADED, tab, pager, payload }),
   onUnload: () => dispatch({ type: HOME_PAGE_UNLOADED }),
-  onSearchSubmit: (keyword) =>
-    dispatch({ type: SEARCH_SUBMIT, payload: agent.Items.byTitle(keyword) }),
+  onSearchChange: (title, pager, payload) =>
+    dispatch({ type: APPLY_TITLE_FILTER, pager, payload, title }),
 });
 
 class Home extends React.Component {
+  constructor(props) {
+    super(props);
+    this.onSearchChange = this.onSearchChange.bind(this);
+  }
   componentWillMount() {
     const tab = "all";
     const itemsPromise = agent.Items.all;
@@ -45,10 +49,28 @@ class Home extends React.Component {
     this.props.onUnload();
   }
 
+  onSearchChange(e) {
+    if (!e.target.value.length) {
+      this.props.onSearchChange(
+        null,
+        (page) => agent.Items.all(),
+        agent.Items.all()
+      );
+    }
+    if (e.target.value.length > 2) {
+      const title = e.target.value;
+      this.props.onSearchChange(
+        title,
+        (page) => agent.Items.byTitle(title, page),
+        agent.Items.byTitle(title)
+      );
+    }
+  }
+
   render() {
     return (
       <div className="home-page">
-        <Banner onSearchSubmit={this.props.onSearchSubmit} />
+        <Banner onSearchChange={this.onSearchChange} />
 
         <div className="container page">
           <Tags tags={this.props.tags} onClickTag={this.props.onClickTag} />
