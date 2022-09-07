@@ -6,7 +6,7 @@ var User = mongoose.model("User");
 var auth = require("../auth");
 const { sendEvent } = require("../../lib/event");
 
-// Preload item objects on routes with ':item'
+//  Preload item objects on routes with ':item'
 router.param("item", function (req, res, next, slug) {
     Item.findOne({ slug: slug })
         .populate("seller")
