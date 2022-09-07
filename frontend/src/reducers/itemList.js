@@ -3,6 +3,7 @@ import {
   ITEM_UNFAVORITED,
   SET_PAGE,
   APPLY_TAG_FILTER,
+  APPLY_TITLE_FILTER,
   HOME_PAGE_LOADED,
   HOME_PAGE_UNLOADED,
   CHANGE_TAB,
@@ -10,7 +11,6 @@ import {
   PROFILE_PAGE_UNLOADED,
   PROFILE_FAVORITES_PAGE_LOADED,
   PROFILE_FAVORITES_PAGE_UNLOADED,
-  SEARCH_SUBMIT,
 } from "../constants/actionTypes";
 
 const reducer = (state = {}, action) => {
@@ -47,13 +47,15 @@ const reducer = (state = {}, action) => {
         tag: action.tag,
         currentPage: 0,
       };
-    case SEARCH_SUBMIT:
+    case APPLY_TITLE_FILTER:
       return {
         ...state,
+        title: action.title,
         pager: action.pager,
         items: action.payload.items,
         itemsCount: action.payload.itemsCount,
         tab: null,
+        tag: action.tag,
         currentPage: 0,
       };
     case HOME_PAGE_LOADED:
